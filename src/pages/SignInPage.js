@@ -11,7 +11,6 @@ export default function SignInPage({setToken}) {
 
   function signIn(e){
     e.preventDefault()
-    console.log(form)
     axios.post("http://localhost:5000/", form)
     .then((res) => {
       setToken(res.data)

@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 export default function HomePage({token}) {
   const [usuario, setUsuario] = useState(undefined)
   const [wallet, setWallet] = useState([])
-  const navigate = useNavigate()
+  //const navigate = useNavigate()
   const [total, setTotal] = useState(0)
 
   function somar(){
@@ -16,7 +16,6 @@ export default function HomePage({token}) {
     for(let i=0; i<wallet.length; i++){
       soma+=Number(wallet[i].value)
     }
-    console.log(soma.toFixed(2))
     setTotal(soma.toFixed(2));
   }
 
@@ -26,7 +25,7 @@ export default function HomePage({token}) {
     axios.get("http://localhost:5000/home", config)
           .then((res) => {
             setUsuario(res.data.userName)
-            setWallet(res.data.userWallet)
+            setWallet(res.data.userWallet.reverse()) //Reverse() para inverter a ordem de exibição do array
           })
           .catch((err) => alert(err.response.data))
     somar()
@@ -38,12 +37,12 @@ export default function HomePage({token}) {
     <HomeContainer>
       <Header>
         <h1>{`Olá, ${usuario}`}</h1>
-        <Link to={"/"}><BiExit /></Link>
+        <StyledLink to={"/"}><BiExit /></StyledLink>
       </Header>
 
       <TransactionsContainer>
         <ListWallet>
-          {wallet.map((item)=>
+          {wallet.length!==0 ? wallet.map((item)=>
             <ul>
             <ListItemContainer>
               <div>
@@ -53,12 +52,12 @@ export default function HomePage({token}) {
               <Value color={item.value<0 ? "negativo" : "positivo"}>{item.value < 0 ? ((Number(item.value))*(-1)).toFixed(2) : Number(item.value).toFixed(2)}</Value>
             </ListItemContainer>
             </ul>
-          )}
+          ) : <p>Não há registros de entrada ou saída</p>}
         </ListWallet>
         
         <article>
           <strong>Saldo</strong>
-          <Value color={total>0 ? "positivo" : "negativo"}>{total<0 ? (total*(-1).toFixed(2)) : total}</Value>
+          <Value color={total>=0 ? "positivo" : "negativo"}>{total<0 ? ((total*(-1)).toFixed(2)) : total}</Value>
         </article>
       </TransactionsContainer>
 
@@ -66,17 +65,17 @@ export default function HomePage({token}) {
       <ButtonsContainer>
         
         <button>
-          <Link to={"/nova-transacao/:entrada"}>
+          <StyledLink to={"/nova-transacao/:entrada"}>
             <AiOutlinePlusCircle />
             <p>Nova <br /> entrada</p>
-          </Link>
+          </StyledLink>
         </button>
                
         <button>
-          <Link to={"/nova-transacao/:saida"}>
+          <StyledLink to={"/nova-transacao/:saida"}>
             <AiOutlineMinusCircle />
             <p>Nova <br />saída</p>
-          </Link>
+          </StyledLink>
         </button>
         
       </ButtonsContainer>
@@ -98,6 +97,13 @@ const Header = styled.header`
   margin-bottom: 15px;
   font-size: 26px;
   color: white;
+  }
+`
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  margin: 0px;
+  padding: 0px;
+  font-size:26px;
 `
 const TransactionsContainer = styled.article`
   flex-grow: 1;
@@ -118,8 +124,15 @@ const TransactionsContainer = styled.article`
   }
 `
 const ListWallet = styled.div`
-  background-color: green;
   overflow: auto;
+  height: calc(100vh - 320px);
+  p {
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 23px;
+    text-align: center;
+    color: #868686;
+  }
 `
 const ButtonsContainer = styled.section`
   margin-top: 15px;
@@ -127,7 +140,7 @@ const ButtonsContainer = styled.section`
   display: flex;
   gap: 15px;
   
-  Link, button {
+  button {
     width: 50%;
     height: 115px;
     font-size: 22px;
@@ -137,6 +150,7 @@ const ButtonsContainer = styled.section`
     justify-content: space-between;
     p {
       font-size: 18px;
+      margin-top: 20px;
     }
   }
 `
