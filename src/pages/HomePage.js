@@ -1,38 +1,64 @@
+import axios from "axios"
 import styled from "styled-components"
 import { Link, useNavigate  } from "react-router-dom"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
+import { useEffect, useState } from "react"
 
-export default function HomePage() {
+export default function HomePage({token}) {
+  const [usuario, setUsuario] = useState(undefined)
+  const [wallet, setWallet] = useState([])
+  const navigate = useNavigate()
+  const [total, setTotal] = useState(0)
+
+  function somar(){
+    let soma=0;
+    for(let i=0; i<wallet.length; i++){
+      soma+=Number(wallet[i].value)
+    }
+    console.log(soma.toFixed(2))
+    setTotal(soma.toFixed(2));
+  }
+
+  useEffect(() => {
+    const config = {headers: { Authorization: `Bearer ${token}` }}
+
+    axios.get("http://localhost:5000/home", config)
+          .then((res) => {
+            setUsuario(res.data.userName)
+            setWallet(res.data.userWallet)
+          })
+          .catch((err) => alert(err.response.data))
+    somar()
+  }, [wallet])
+
+  if (!usuario) return <div>Carregando...</div>
+
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá, Fulano</h1>
+        <h1>{`Olá, ${usuario}`}</h1>
         <Link to={"/"}><BiExit /></Link>
       </Header>
 
       <TransactionsContainer>
-        <ul>
-          <ListItemContainer>
-            <div>
-              <span>30/11</span>
-              <strong>Almoço mãe</strong>
-            </div>
-            <Value color={"negativo"}>120,00</Value>
-          </ListItemContainer>
-
-          <ListItemContainer>
-            <div>
-              <span>15/11</span>
-              <strong>Salário</strong>
-            </div>
-            <Value color={"positivo"}>3000,00</Value>
-          </ListItemContainer>
-        </ul>
-
+        <ListWallet>
+          {wallet.map((item)=>
+            <ul>
+            <ListItemContainer>
+              <div>
+                <span>{item.date}</span>
+                <strong>{item.description}</strong>
+              </div>
+              <Value color={item.value<0 ? "negativo" : "positivo"}>{item.value < 0 ? ((Number(item.value))*(-1)).toFixed(2) : Number(item.value).toFixed(2)}</Value>
+            </ListItemContainer>
+            </ul>
+          )}
+        </ListWallet>
+        
         <article>
           <strong>Saldo</strong>
-          <Value color={"positivo"}>2880,00</Value>
+          <Value color={total>0 ? "positivo" : "negativo"}>{total<0 ? (total*(-1).toFixed(2)) : total}</Value>
         </article>
       </TransactionsContainer>
 
@@ -90,6 +116,10 @@ const TransactionsContainer = styled.article`
       text-transform: uppercase;
     }
   }
+`
+const ListWallet = styled.div`
+  background-color: green;
+  overflow: auto;
 `
 const ButtonsContainer = styled.section`
   margin-top: 15px;
