@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { Link, useNavigate  } from "react-router-dom"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
 
@@ -7,7 +8,7 @@ export default function HomePage() {
     <HomeContainer>
       <Header>
         <h1>Olá, Fulano</h1>
-        <BiExit />
+        <Link to={"/"}><BiExit /></Link>
       </Header>
 
       <TransactionsContainer>
@@ -37,14 +38,21 @@ export default function HomePage() {
 
 
       <ButtonsContainer>
+        
         <button>
-          <AiOutlinePlusCircle />
-          <p>Nova <br /> entrada</p>
+          <Link to={"/nova-transacao/:entrada"}>
+            <AiOutlinePlusCircle />
+            <p>Nova <br /> entrada</p>
+          </Link>
         </button>
+               
         <button>
-          <AiOutlineMinusCircle />
-          <p>Nova <br />saída</p>
+          <Link to={"/nova-transacao/:saida"}>
+            <AiOutlineMinusCircle />
+            <p>Nova <br />saída</p>
+          </Link>
         </button>
+        
       </ButtonsContainer>
 
     </HomeContainer>
@@ -89,7 +97,7 @@ const ButtonsContainer = styled.section`
   display: flex;
   gap: 15px;
   
-  button {
+  Link, button {
     width: 50%;
     height: 115px;
     font-size: 22px;
