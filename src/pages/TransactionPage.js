@@ -16,7 +16,7 @@ export default function TransactionsPage({token}) {
     
   function addWallet(e){
     e.preventDefault();
-    axios.post(`http://localhost:5000/nova-transacao/${tpe}`, body, config)
+    axios.post(`https://mywallet-back-5yrn.onrender.com/nova-transacao/${tpe}`, body, config)
         .then((res) => {
           console.log(res.data)
           navigate("/home")

@@ -14,7 +14,7 @@ export default function SignUpPage() {
       e.preventDefault()
       if(form.password!==passwordConfirm) return alert("As senhas devem ser iguais!")
 
-      axios.post("http://localhost:5000/cadastro", form)
+      axios.post("https://mywallet-back-5yrn.onrender.com/cadastro", form)
       .then((res) => navigate("/"))
       .catch((err) => alert(err.response.data)) 
   }

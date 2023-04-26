@@ -22,7 +22,7 @@ export default function HomePage({token}) {
   useEffect(() => {
     const config = {headers: { Authorization: `Bearer ${token}` }}
 
-    axios.get("http://localhost:5000/home", config)
+    axios.get("https://mywallet-back-5yrn.onrender.com/home", config)
           .then((res) => {
             setUsuario(res.data.userName)
             setWallet(res.data.userWallet.reverse()) //Reverse() para inverter a ordem de exibição do array
